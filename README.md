@@ -1,6 +1,18 @@
 # AudioToText Transcription and Summarization Tool
 
-A Python tool that transcribes audio files to text and generates summaries in multiple languages using Google Speech Recognition and Google's Gemini AI.
+A Python tool that transcribes audio files to text and generates summaries in multiple languages using Google Speech Recognition and Google's Gemini AI. Perfect for students and professionals who want to convert their lecture recordings, course materials, or meetings into organized text summaries.
+
+## Perfect for Course Note-Taking!
+
+🎓 **Ideal for Students and Educators:**
+- Convert lecture recordings into searchable text
+- Get concise summaries of long lectures
+- Support for multiple languages (great for language courses!)
+- Organize key points automatically
+- Save time on manual note-taking
+- Review materials efficiently with AI-generated summaries
+
+💡 **Pro Tip:** Record your lectures (with permission), run them through AudioToText, and get both a full transcript and a structured summary to enhance your study materials!
 
 ## Features
 
