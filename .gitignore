@@ -1,0 +1,16 @@
+# FFmpeg executables
+tools/ffmpeg.exe
+tools/ffplay.exe
+tools/ffprobe.exe
+
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Operating System Files
+.DS_Store
+Thumbs.db
