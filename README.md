@@ -1,29 +1,24 @@
-# AudioToText Transcription and Summarization Tool
+# AudioToText — Batch transcription (no summarization)
 
-A Python tool that transcribes audio files to text and generates summaries in multiple languages using Google Speech Recognition and Google's Gemini AI. Perfect for students and professionals who want to convert their lecture recordings, course materials, or meetings into organized text summaries.
+AudioToText converts audio files into text. The current version focuses on reliable batch transcription (place audio files in the `audio/` folder) and saves one `.txt` transcript per audio file. It uses Google Speech recognition (via the SpeechRecognition package) and FFmpeg (via pydub) for conversion and preprocessing.
 
-## Perfect for Course Note-Taking!
+This repository previously included automatic Gemini summarization; the codebase has since been refactored to remove automatic summarization and to provide a faster, more robust batch-transcription workflow.
 
-🎓 **Ideal for Students and Educators:**
-- Convert lecture recordings into searchable text
-- Get concise summaries of long lectures
-- Support for multiple languages (great for language courses!)
-- Organize key points automatically
-- Save time on manual note-taking
-- Review materials efficiently with AI-generated summaries
+## Why use this
 
-💡 **Pro Tip:** Record your lectures (with permission), run them through AudioToText, and get both a full transcript and a structured summary to enhance your study materials!
+- Great for course note-taking: drop lecture recordings in `audio/` and get clean transcripts
+- Batch processing: transcribe multiple files without manual input
+- Parallel chunk processing for speed (processes chunks of a file concurrently)
+- Persian support (fa-IR) plus many other languages
 
-## Features
+## Key Features
 
-- Multi-language audio transcription
-- Automatic audio format conversion (supports MP3, M4A, WAV, etc.)
-- Smart audio preprocessing (normalization, mono conversion, resampling)
-- Chunk-based processing for long audio files
-- Language-native summarization
-- Support for 8 different languages
+- Batch-processing: put audio files into the `audio/` folder and run the script
+- Parallel chunk transcription inside each file (configurable via `MAX_WORKERS`)
+- Supports common audio formats: MP3, M4A, WAV, FLAC, OGG, WMA
+- Language override via CLI or environment variable (see Usage)
 
-## Supported Languages
+## Supported Languages (examples)
 
 - French (fr-FR)
 - English (en-US)
@@ -33,172 +28,86 @@ A Python tool that transcribes audio files to text and generates summaries in mu
 - Japanese (ja-JP)
 - Korean (ko-KR)
 - Chinese Simplified (zh-CN)
+- Persian (fa-IR)
 
 ## Prerequisites
 
-1. Python 3.x
-2. FFmpeg installed on your system
-3. Google API Key for Gemini AI
+1. Python 3.8+
+2. FFmpeg installed and available in PATH
+3. Python packages: SpeechRecognition, pydub
 
-## Installation
+## Install
 
-1. Clone the repository:
-```bash
-git clone https://github.com/Pooriadf/audiototext.git
-cd audiototext
-```
-
-2. Create and activate a virtual environment (recommended):
-```bash
-# Windows
+```powershell
+# Create & activate venv (Windows PS)
 python -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\Activate.ps1
 
-# Linux/Mac
-python -m venv .venv
-source .venv/bin/activate
+pip install SpeechRecognition pydub
 ```
 
-3. Install required packages:
-```bash
-pip install SpeechRecognition google-generativeai pydub
-```
-
-4. Install FFmpeg:
-```bash
-# Windows (using winget)
-winget install -e --id Gyan.FFmpeg
-
-# Windows (using chocolatey)
-choco install ffmpeg
-
-# Mac
-brew install ffmpeg
-
-# Linux (Ubuntu/Debian)
-sudo apt-get install ffmpeg
-```
-
-5. Set up your Google API Key:
-```bash
-# Windows PowerShell
-$env:GOOGLE_API_KEY="your-api-key-here"
-
-# Linux/Mac
-export GOOGLE_API_KEY="your-api-key-here"
-```
+Install FFmpeg for your OS (winget/choco/brew/apt as appropriate).
 
 ## Usage
 
-1. Basic usage:
-```bash
-python audioToText.py path/to/your/audio.mp3
+1. Put audio files into the `audio/` folder in the repository root.
+2. Run the script. By default the tool uses French (`fr-FR`) unless you override the language.
+
+One-off (select Persian):
+```powershell
+C:/Python312/python.exe .\audioToText.py --lang fa
 ```
 
-2. Follow the interactive prompts to:
-   - Select your audio's language
-   - View the transcription
-   - Get the summary
-
-## Examples
-
-### Example 1: French Lecture Transcription
-
-```bash
-python audioToText.py lecture.mp3
+Or set environment variable for the session (PowerShell):
+```powershell
+$env:AUDIO_LANG = 'fa'
+C:/Python312/python.exe .\audioToText.py
 ```
 
-Output:
-```
-Available languages:
-1. French
-2. English
-3. German
-[...]
+Notes:
+- Acceptable `--lang` values: `fa`, `fa-IR`, `persian`, `en`, `en-US`, `fr`, `fr-FR`, etc.
+- The script saves transcripts as `audio_filename.txt` next to each audio file.
 
-Select the language of your audio (1-8): 1
+## Configuration
 
-Selected language: French
-Loading audio file: lecture.mp3...
-Converting audio to WAV format...
-[...]
+Open `audioToText.py` and change:
 
-RÉSUMÉ:
-[Your French summary appears here]
+- `MAX_WORKERS` — number of parallel chunk workers (default 4)
+- `CHUNK_LENGTH` — chunk size in milliseconds (default 300000 = 300s)
+- `LANGUAGE_CODE` — default language code (e.g., `fr-FR`)
 
-THÈMES PRINCIPAUX:
-• Point 1
-• Point 2
-[...]
+## Example
+
+```powershell
+# Transcribe Persian files in audio/ using 4 parallel chunk workers
+C:/Python312/python.exe .\audioToText.py --lang fa
 ```
 
-### Example 2: English Meeting Recording
+Output (example):
 
-```bash
-python audioToText.py meeting.m4a
-```
+======================================================================
+                  🎵 AUDIO TO TEXT BATCH PROCESSOR 🎵
+======================================================================
 
-Output:
-```
-Select the language of your audio (1-8): 2
+📊 Found 2 file(s)
+⚙️  Using 4 parallel workers per file
+📝 Chunk size: 300s | Language: Persian (fa-IR)
 
-Selected language: English
-[...]
-
-SUMMARY:
-[Your English summary appears here]
-
-MAIN THEMES:
-• Discussion point 1
-• Action items
-[...]
-```
-
-## Advanced Features
-
-1. **Audio Preprocessing**:
-   - Automatic audio normalization
-   - Conversion to mono for better recognition
-   - Resampling to 16kHz
-   - Chunk-based processing for long files
-
-2. **Format Support**:
-   - WAV
-   - MP3
-   - M4A
-   - And other formats supported by FFmpeg
+[...] (progress lines and saved .txt files)
 
 ## Troubleshooting
 
-1. **FFmpeg not found error**:
-   - Ensure FFmpeg is installed and in your system PATH
-   - Windows users can install via: `winget install -e --id Gyan.FFmpeg`
-
-2. **API Key Issues**:
-   - Verify your Google API key is correctly set
-   - Check if the key has proper permissions
-   - Visit https://makersuite.google.com/app/apikey to manage keys
-
-3. **Audio Not Recognized**:
-   - Ensure clear audio quality
-   - Check if the correct language is selected
-   - Try with a shorter audio segment first
+- If FFmpeg is not found, install it and ensure it's on PATH.
+- If recognition fails on some chunks, try lowering `CHUNK_LENGTH` or improving audio quality.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome — open a PR or an issue.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Google Speech Recognition API
-- Google Gemini AI
-- FFmpeg project
-- All contributors and users
+MIT — see LICENSE
 
 ## Contact
 
-- GitHub: [@Pooriadf](https://github.com/Pooriadf)
+- GitHub: https://github.com/Pooriadf
